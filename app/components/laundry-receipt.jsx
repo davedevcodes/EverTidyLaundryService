@@ -10,6 +10,8 @@ const LaundryReceipt = () => {
   const [selectedCategory, setSelectedCategory] = useState('men');
   const [customerName, setCustomerName] = useState('');
   const [showReceipt, setShowReceipt] = useState(false);
+  const [discount, setDiscount] = useState(0);
+  const [receiptStyle, setReceiptStyle] = useState('standard'); // 'standard' or 'pos'
   const receiptRef = useRef();
 
   // Laundry items with pricing
@@ -89,7 +91,6 @@ const LaundryReceipt = () => {
       { name: 'Turtle Neck Top', price: 800 },
       { name: 'Crop Top', price: 600 },
       { name: 'Palazzo Jeans', price: 1000 },
-
     ],
     children: [
       { name: 'Shirt / T-shirt', price: 500 },
@@ -152,8 +153,24 @@ const LaundryReceipt = () => {
     setCart(cart.filter((cartItem) => !(cartItem.name === item.name && cartItem.category === item.category)));
   };
 
-  const calculateTotal = () => {
+  const calculateSubtotal = () => {
     return cart.reduce((total, item) => total + item.price * item.quantity, 0);
+  };
+
+  const calculateTotal = () => {
+    const subtotal = calculateSubtotal();
+    return subtotal - discount;
+  };
+
+  const handleDiscountChange = (e) => {
+    const value = parseFloat(e.target.value) || 0;
+    const subtotal = calculateSubtotal();
+    // Ensure discount doesn't exceed subtotal
+    if (value <= subtotal) {
+      setDiscount(value);
+    } else {
+      setDiscount(subtotal);
+    }
   };
 
   const generateReceipt = () => {
@@ -275,11 +292,61 @@ const LaundryReceipt = () => {
                 </div>
 
                 <div className="border-t pt-4">
-                  <div className="flex justify-between items-center mb-4">
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-sm font-semibold">Subtotal:</span>
+                    <span className="text-lg font-semibold text-gray-700">
+                      ₦{calculateSubtotal().toLocaleString()}
+                    </span>
+                  </div>
+
+                  <div className="mb-3">
+                    <label className="text-sm font-semibold text-gray-700 block mb-1">
+                      Discount (₦)
+                    </label>
+                    <input
+                      type="number"
+                      placeholder="0"
+                      value={discount || ''}
+                      onChange={handleDiscountChange}
+                      min="0"
+                      max={calculateSubtotal()}
+                      className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    />
+                  </div>
+
+                  <div className="flex justify-between items-center mb-4 pb-3 border-b">
                     <span className="text-lg font-bold">Total:</span>
                     <span className="text-2xl font-bold text-indigo-600">
                       ₦{calculateTotal().toLocaleString()}
                     </span>
+                  </div>
+
+                  <div className="mb-3">
+                    <label className="text-sm font-semibold text-gray-700 block mb-1">
+                      Receipt Style
+                    </label>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => setReceiptStyle('standard')}
+                        className={`flex-1 py-2 rounded-lg font-medium transition-colors ${
+                          receiptStyle === 'standard'
+                            ? 'bg-indigo-600 text-white'
+                            : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                        }`}
+                      >
+                        Standard
+                      </button>
+                      <button
+                        onClick={() => setReceiptStyle('pos')}
+                        className={`flex-1 py-2 rounded-lg font-medium transition-colors ${
+                          receiptStyle === 'pos'
+                            ? 'bg-indigo-600 text-white'
+                            : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                        }`}
+                      >
+                        POS
+                      </button>
+                    </div>
                   </div>
 
                   <input
@@ -306,82 +373,192 @@ const LaundryReceipt = () => {
       {/* Receipt Modal */}
       {showReceipt && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white text-black rounded-lg shadow-2xl max-w-xl w-full max-h-[90vh] overflow-y-auto">
+          <div className={`bg-white text-black rounded-lg shadow-2xl ${receiptStyle === 'pos' ? 'max-w-sm' : 'max-w-xl'} w-full max-h-[90vh] overflow-y-auto`}>
             <div className="sticky top-0 bg-white border-b p-4 flex justify-between items-center print:hidden">
-
               <button
                 onClick={() => setShowReceipt(false)}
-                className="text-gray-500 hover:text-gray-700"
+                className="text-gray-500 hover:text-gray-700 ml-auto"
               >
                 <X size={24} />
               </button>
             </div>
 
-            <div ref={receiptRef} className="p-8">
-              <div className="text-center mb-6">
-                <Image
-                  src="/Logo.png"
-                  alt="Evertidy logo"
-                  width={200}
-                  height={200}
-                  className="bg-blue-950 rounded-full flex self-center mx-auto mb-5"
-                />
-                <h1 className="text-3xl font-bold text-indigo-900">RECEIPT</h1>
-                <div className="w-full h-1 bg-indigo-600 my-2"></div>
-              </div>
-
-              <div className="mb-6 space-y-1">
-                <p><strong>Customer Name:</strong> {customerName}</p>
-                <p><strong>Date:</strong> {new Date().toLocaleDateString()}</p>
-                <p><strong>Receipt #:</strong> {Date.now().toString().slice(-8)}</p>
-              </div>
-
-              <table className="w-full mb-6">
-                <thead>
-                  <tr className="border-b-2 border-gray-800">
-                    <th className="text-left py-2">Item</th>
-                    <th className="text-left py-2">Category</th>
-                    <th className="text-center py-2">Qty</th>
-                    <th className="text-right py-2">Price</th>
-                    <th className="text-right py-2">Total</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {cart.map((item, index) => (
-                    <tr key={index} className="border-b">
-                      <td className="py-2">{item.name}</td>
-                      <td className="py-2 capitalize">{item.category}</td>
-                      <td className="text-center py-2">{item.quantity}</td>
-                      <td className="text-right py-2">₦{item.price.toLocaleString()}</td>
-                      <td className="text-right py-2">
-                        ₦{(item.price * item.quantity).toLocaleString()}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-
-              <div className="border-t-2 border-gray-800 pt-4 mb-6">
-                <div className="flex justify-between items-center">
-                  <span className="text-xl font-bold">TOTAL:</span>
-                  <span className="text-3xl font-bold text-indigo-600">
-                    ₦{calculateTotal().toLocaleString()}
-                  </span>
+            {receiptStyle === 'standard' ? (
+              // Standard Receipt
+              <div ref={receiptRef} className="p-8">
+                <div className="text-center mb-6">
+                  <Image
+                    src="/Logo.png"
+                    alt="Evertidy logo"
+                    width={200}
+                    height={200}
+                    className="bg-blue-950 rounded-full flex self-center mx-auto mb-5"
+                  />
+                  <h1 className="text-3xl font-bold text-indigo-900">RECEIPT</h1>
+                  <div className="w-full h-1 bg-indigo-600 my-2"></div>
                 </div>
-              </div>
 
-              <div className="text-center text-gray-600 italic mb-6">
-                Thank you for your patronage!
-              </div>
+                <div className="mb-6 space-y-1">
+                  <p><strong>Customer Name:</strong> {customerName}</p>
+                  <p><strong>Date:</strong> {new Date().toLocaleDateString()}</p>
+                  <p><strong>Receipt #:</strong> {Date.now().toString().slice(-8)}</p>
+                </div>
 
-              <button
-                onClick={handlePrint}
-                className="w-full bg-indigo-600 text-white py-3 rounded-lg hover:bg-indigo-700 transition-colors font-semibold flex items-center justify-center gap-2 print:hidden"
-              >
-                <Printer size={20} />
-                Print / Save as PDF
-              </button>
-            </div>
+                <table className="w-full mb-6">
+                  <thead>
+                    <tr className="border-b-2 border-gray-800">
+                      <th className="text-left py-2">Item</th>
+                      <th className="text-left py-2">Category</th>
+                      <th className="text-center py-2">Qty</th>
+                      <th className="text-right py-2">Price</th>
+                      <th className="text-right py-2">Total</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {cart.map((item, index) => (
+                      <tr key={index} className="border-b">
+                        <td className="py-2">{item.name}</td>
+                        <td className="py-2 capitalize">{item.category}</td>
+                        <td className="text-center py-2">{item.quantity}</td>
+                        <td className="text-right py-2">₦{item.price.toLocaleString()}</td>
+                        <td className="text-right py-2">
+                          ₦{(item.price * item.quantity).toLocaleString()}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+
+                <div className="border-t-2 border-gray-800 pt-4 mb-2">
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-lg">Subtotal:</span>
+                    <span className="text-lg">₦{calculateSubtotal().toLocaleString()}</span>
+                  </div>
+                  {discount > 0 && (
+                    <div className="flex justify-between items-center mb-2 text-green-600">
+                      <span className="text-lg">Discount:</span>
+                      <span className="text-lg">-₦{discount.toLocaleString()}</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between items-center pt-2 border-t">
+                    <span className="text-xl font-bold">TOTAL:</span>
+                    <span className="text-3xl font-bold text-indigo-600">
+                      ₦{calculateTotal().toLocaleString()}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="text-center text-gray-600 italic my-6">
+                  Thank you for your patronage!
+                </div>
+
+                <button
+                  onClick={handlePrint}
+                  className="w-full bg-indigo-600 text-white py-3 rounded-lg hover:bg-indigo-700 transition-colors font-semibold flex items-center justify-center gap-2 print:hidden"
+                >
+                  <Printer size={20} />
+                  Print / Save as PDF
+                </button>
+              </div>
+            ) : (
+              // POS Receipt Style
+              <div ref={receiptRef} className="p-6 font-mono text-sm bg-white">
+                <div className="text-center mb-4">
+                  <Image
+                    src="/Logo.png"
+                    alt="Evertidy logo"
+                    width={120}
+                    height={120}
+                    className="bg-blue-950 rounded-full flex self-center mx-auto mb-3"
+                  />
+                  <h1 className="text-xl font-bold">EVERTIDY LAUNDRY</h1>
+                  <p className="text-xs mt-1">Premium Laundry Services</p>
+                  <p className="text-xs">Tel: +234-812-209-9927</p>
+                  <div className="border-t-2 border-dashed border-gray-800 my-2"></div>
+                </div>
+
+                <div className="mb-4 text-xs space-y-1">
+                  <div className="flex justify-between">
+                    <span>Customer:</span>
+                    <span className="font-semibold">{customerName}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Date:</span>
+                    <span>{new Date().toLocaleDateString()}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Time:</span>
+                    <span>{new Date().toLocaleTimeString()}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Receipt #:</span>
+                    <span>{Date.now().toString().slice(-8)}</span>
+                  </div>
+                </div>
+
+                <div className="border-t-2 border-dashed border-gray-800 my-2"></div>
+
+                <div className="mb-4">
+                  {cart.map((item, index) => (
+                    <div key={index} className="mb-3">
+                      <div className="flex justify-between items-start">
+                        <span className="font-semibold">{item.name}</span>
+                      </div>
+                      <div className="flex justify-between text-xs ml-2">
+                        <span>
+                          {item.quantity} x ₦{item.price.toLocaleString()}
+                        </span>
+                        <span className="font-semibold">
+                          ₦{(item.price * item.quantity).toLocaleString()}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="border-t-2 border-dashed border-gray-800 my-2"></div>
+
+                <div className="space-y-1 mb-2">
+                  <div className="flex justify-between">
+                    <span>SUBTOTAL:</span>
+                    <span>₦{calculateSubtotal().toLocaleString()}</span>
+                  </div>
+                  {discount > 0 && (
+                    <div className="flex justify-between text-green-600">
+                      <span>DISCOUNT:</span>
+                      <span>-₦{discount.toLocaleString()}</span>
+                    </div>
+                  )}
+                </div>
+
+                <div className="border-t-2 border-double border-gray-800 my-2"></div>
+
+                <div className="flex justify-between text-lg font-bold mb-4">
+                  <span>TOTAL:</span>
+                  <span>₦{calculateTotal().toLocaleString()}</span>
+                </div>
+
+                <div className="border-t-2 border-dashed border-gray-800 my-2"></div>
+
+                <div className="text-center text-xs mt-4">
+                  <p className="font-semibold">Thank you for your patronage!</p>
+                  <p className="mt-2">Visit us again soon</p>
+                  <p className="mt-2">www.evertidylaundryservices.com</p>
+                </div>
+
+                <div className="text-center text-xs mt-4">
+                  <p>* * * END OF RECEIPT * * *</p>
+                </div>
+
+                <button
+                  onClick={handlePrint}
+                  className="w-full bg-indigo-600 text-white py-3 rounded-lg hover:bg-indigo-700 transition-colors font-semibold flex items-center justify-center gap-2 mt-6 print:hidden"
+                >
+                  <Printer size={20} />
+                  Print / Save as PDF
+                </button>
+              </div>
+            )}
           </div>
         </div>
       )}
