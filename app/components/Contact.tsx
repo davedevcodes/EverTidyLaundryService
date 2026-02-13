@@ -14,7 +14,7 @@ export default function Contact() {
     {
       icon: MapPin,
       title: "Address",
-      content: "9 Soji Olagunju St, Lekki Penninsula II, \nLekki 106104, Lagos, Nigeria"
+      content: "Orchid Road, opposite Applewood Mall, off Oba Akinloye Drive, Eti-Osa, Lekki 112104, Lagos"
     },
     {
       icon: Phone,
@@ -184,7 +184,8 @@ export default function Contact() {
               className="rounded-2xl overflow-hidden shadow-xl h-125"
             >
               <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3964.7239547346585!2d3.520803374765679!3d6.4294980935615955!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x103bf65ce365078f%3A0xe210a1fc353dee1d!2s9%20Soji%20Olagunju%20St%2C%20Lekki%20Penninsula%20II%2C%20Lekki%20106104%2C%20Lagos%2C%20Nigeria!5e0!3m2!1sen!2sus!4v1767876406017!5m2!1sen!2sus"
+              // <iframe src=""></iframe>
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3964.7029773560207!2d3.565595074752462!3d6.4321876935589515!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x103bf7fa8fd8e535%3A0xefb7d87397de649f!2severtidy%20laundry%20services!5e0!3m2!1sen!2sng!4v1770971907962!5m2!1sen!2sng"
                 width="100%"
                 height="100%"
                 style={{ border: 0 }}

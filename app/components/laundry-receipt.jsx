@@ -371,7 +371,7 @@ const LaundryReceipt = () => {
               </div>
 
               <div className="text-center text-gray-600 italic mb-6">
-                Thank you for your business!
+                Thank you for your patronage!
               </div>
 
               <button

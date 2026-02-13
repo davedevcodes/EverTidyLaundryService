@@ -69,7 +69,7 @@ export default function Footer() {
             <ul className="space-y-3">
               <li className="flex items-start">
                 <MapPin className="w-8 h-8 mr-2 shrink-0 mt-1" />
-                <span className="text-md">9 Soji Olagunju St, Lekki Penninsula II, Lekki 106104, Lagos, Nigeria</span>
+                <span className="text-md">Orchid Road, opposite Applewood Mall, off Oba Akinloye Drive, Eti-Osa, Lekki 112104, Lagos</span>
               </li>
               <li className="flex items-center">
                 <Phone className="w-8 h-8 mr-2 shrink-0" />
