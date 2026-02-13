@@ -5,6 +5,7 @@ import { Sparkles, Clock, Truck, Shield } from 'lucide-react'
 import { motion, useInView, cubicBezier } from 'framer-motion'
 import { useRef } from 'react'
 import Pricing from './Pricing'
+import Receipt from './laundry-receipt'
 
 export default function Services() {
   const ref = useRef(null)
@@ -133,6 +134,7 @@ export default function Services() {
         </motion.div>
       </div>
       <Pricing />
+      <Receipt />
     </section>
   )
 }

@@ -1,4 +1,5 @@
 {
+  "$schema": "https://json.schemastore.org/package.json",
   "name": "evertidy-laundry-services",
   "version": "0.1.0",
   "private": true,
@@ -10,10 +11,12 @@
   },
   "dependencies": {
     "framer-motion": "^12.24.11",
+    "jspdf": "^2.5.2",
     "lucide-react": "^0.562.0",
     "next": "16.1.1",
     "react": "19.2.3",
-    "react-dom": "19.2.3"
+    "react-dom": "19.2.3",
+    "react-to-print": "^3.2.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

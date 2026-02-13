@@ -149,7 +149,7 @@ export default function Contact() {
                 <motion.a
                   whileHover={{ scale: 1.1, y: -5 }}
                   whileTap={{ scale: 0.95 }}
-                  href="https://wa.me/15551234567"
+                  href="https://wa.me/message/QXZRVT3NLXWRP1"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-12 h-12 bg-green-500 hover:bg-green-600 rounded-lg flex items-center justify-center transition-colors group"

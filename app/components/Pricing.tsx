@@ -15,8 +15,6 @@ export default function Pricing() {
       name: 'Wash & Fold',
       image: 'https://images.unsplash.com/photo-1582735689369-4fe89db7114c?w=800',
       description: 'Perfect for everyday laundry needs',
-      price: '$1.50',
-      unit: 'per lb',
       features: [
         'Professional washing & drying',
         'Neatly folded & packaged',
@@ -28,8 +26,6 @@ export default function Pricing() {
       name: 'Dry Cleaning',
       image: 'https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?w=800',
       description: 'Premium care for delicate garments',
-      price: '$5.99',
-      unit: 'per item',
       features: [
         'Expert stain removal',
         'Pressed & ready to wear',
@@ -42,8 +38,6 @@ export default function Pricing() {
       name: 'Wash & Iron',
       image: 'https://images.unsplash.com/photo-1489274495757-95c7c837b101?w=800',
       description: 'Crisp, wrinkle-free clothes ready to wear',
-      price: '$2.50',
-      unit: 'per lb',
       features: [
         'Professional washing',
         'Expert ironing & pressing',
@@ -148,20 +142,7 @@ export default function Pricing() {
 
               {/* Content */}
               <div className="p-8">
-                <p className="text-gray-600 mb-6">{plan.description}</p>
-
-                {/* Price */}
-                <motion.div 
-                  initial={{ scale: 0.8, opacity: 0 }}
-                  animate={isInView ? { scale: 1, opacity: 1 } : { scale: 0.8, opacity: 0 }}
-                  transition={{ duration: 0.5, delay: 0.4 + index * 0.2, type: "spring", stiffness: 200 }}
-                  className="mb-6"
-                >
-                  <div className="flex items-baseline">
-                    <span className="text-5xl font-bold text-gray-900">{plan.price}</span>
-                    <span className="ml-2 text-gray-600">{plan.unit}</span>
-                  </div>
-                </motion.div>
+                <p className="text-black text-xl font-semi-bold mb-6">{plan.description}</p>
 
                 {/* Features */}
                 <ul className="space-y-3 mb-8">

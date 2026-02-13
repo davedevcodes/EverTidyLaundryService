@@ -3,6 +3,8 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import Image from "next/image";
+
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
@@ -12,9 +14,16 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 py-1 md:py-2 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <Link href="/" className="text-4xl font-heading font-bold text-blue-600 font-heading">
-            EverTidy
-          </Link>
+          <div className="flex items-center gap-4">
+            <Image 
+            className="bg-blue-950 rounded-full"
+            src="/Logo.png"
+            alt="Evertidy Laundry Services Logo"
+            width={60}
+            height={60}
+            />
+            <h1 className="text-blue-600 text-3xl font-medium">EverTidy</h1>
+          </div>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex space-x-8 text-lg">
