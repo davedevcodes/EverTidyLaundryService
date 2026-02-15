@@ -106,7 +106,8 @@ const LaundryReceipt = () => {
       { name: 'Bibs', price: 300 },
     ],
     household: [
-      { name: 'Bedsheet', price: 1000 },
+      { name: 'Bedsheet Big', price: 1500 },
+      { name: 'Bedsheet Small', price: 1000 },
       { name: 'Pillowcase', price: 500 },
       { name: 'Duvet (medium)', price: 2500 },
       { name: 'Duvet (large)', price: 3000 },
@@ -116,6 +117,24 @@ const LaundryReceipt = () => {
       { name: 'Blanket', price: 2000 },
       { name: 'Sofa Covers (per set)', price: 2000 },
       { name: 'Mattress Cover', price: 2000 },
+    ],
+    Special: [
+      { name: '(Kids) 40 Cloths (Wash & Fold)', price: 15000 },
+      { name: '(Kids) 40 Cloths (Wash & Iron)', price: 30000 },
+      { name: '(Adult) 20 Cloths (Wash & Fold)', price: 10000 },
+      { name: '(Adult) 20 Cloths (Wash & Fold)', price: 15000 },
+    ],
+    StainRemoval: [
+      { name: 'Heavy Grease / Oil(Palm oil, Diesel)', price: 3000 },
+      { name: 'Ink / Dye / Paint Stains', price: 3000 },
+      { name: 'Blood', price: 2000 },
+      { name: 'Red Wine', price: 1500 },
+      { name: 'Mildew / Mold Treatment', price: 1500 },
+      { name: 'Whitening Service (Brightening Whites)', price: 3000 },
+      { name: 'Sweat Collar & Underarm Stain Removal', price: 1000 },
+      { name: 'Rust Stain Removal', price: 2000 },
+      { name: 'Odour Neutralizing Treatment', price: 1000 },
+      { name: 'Starch & Ironing', price: 1000 },
     ],
   };
 
