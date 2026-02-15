@@ -118,7 +118,7 @@ const LaundryReceipt = () => {
       { name: 'Sofa Covers (per set)', price: 2000 },
       { name: 'Mattress Cover', price: 2000 },
     ],
-    Special: [
+    SpecialPackages: [
       { name: '(Kids) 40 Cloths (Wash & Fold)', price: 15000 },
       { name: '(Kids) 40 Cloths (Wash & Iron)', price: 30000 },
       { name: '(Adult) 20 Cloths (Wash & Fold)', price: 10000 },
