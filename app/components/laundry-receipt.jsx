@@ -55,6 +55,9 @@ const LaundryReceipt = () => {
       { name: 'Complete Pullover', price: 1500 }, 
       { name: 'Pullover Top', price: 1000 }, 
       { name: 'Shorts', price: 400 },
+      { name: 'Jeans Nika', price: 1000 },
+      { name: 'Polo', price: 800 },
+      { name: 'Armless Polo', price: 500 },
     ],
     women: [
       { name: 'Colored Shirt', price: 800 },
@@ -91,6 +94,9 @@ const LaundryReceipt = () => {
       { name: 'Turtle Neck Top', price: 800 },
       { name: 'Crop Top', price: 600 },
       { name: 'Palazzo Jeans', price: 1000 },
+      { name: 'Bum shot', price: 600 },
+      { name: 'Polo', price: 800 },
+      { name: 'Armless Polo', price: 500 },
     ],
     children: [
       { name: 'Shirt / T-shirt', price: 500 },
@@ -111,6 +117,7 @@ const LaundryReceipt = () => {
       { name: 'Pillowcase', price: 500 },
       { name: 'Duvet (medium)', price: 2500 },
       { name: 'Duvet (large)', price: 3000 },
+      { name: 'Duvet Cover', price: 1500 },
       { name: 'Curtain (per pair)', price: 1500 },
       { name: 'Towel (large)', price: 1500 },
       { name: 'Towel (small/face)', price: 500 },
