@@ -10,7 +10,6 @@ const LaundryReceipt = () => {
   const [selectedCategory, setSelectedCategory] = useState('men');
   const [customerName, setCustomerName] = useState('');
   const [showReceipt, setShowReceipt] = useState(false);
-  const [discount, setDiscount] = useState(0);
   const [receiptStyle, setReceiptStyle] = useState('standard'); // 'standard' or 'pos'
   const receiptRef = useRef();
 
@@ -44,7 +43,7 @@ const LaundryReceipt = () => {
       { name: 'Lawyers Bib', price: 1000 }, 
       { name: 'Pyjamas Set', price: 1000 }, 
       { name: 'Boxers', price: 300 }, 
-      { name: 'Armless Jacket', price: 1000 }, 
+      { name: 'Armless Jacket', price: 1000 },
       { name: 'Canvas Shoe', price: 2000 }, 
       { name: 'Laptop Bag', price: 1000 },  
       { name: 'Jalamia', price: 1000 }, 
@@ -130,7 +129,7 @@ const LaundryReceipt = () => {
       { name: '(Kids) 40 Cloths (Wash & Fold)', price: 15000 },
       { name: '(Kids) 40 Cloths (Wash & Iron)', price: 30000 },
       { name: '(Adult) 20 Cloths (Wash & Fold)', price: 10000 },
-      { name: '(Adult) 20 Cloths (Wash & Fold)', price: 15000 },
+      { name: '(Adult) 20 Cloths (Wash & Iron)', price: 15000 },
     ],
     StainRemoval: [
       { name: 'Heavy Grease / Oil(Palm oil, Diesel)', price: 3000 },
@@ -160,7 +159,7 @@ const LaundryReceipt = () => {
         )
       );
     } else {
-      setCart([...cart, { ...item, category, quantity: 1 }]);
+      setCart([...cart, { ...item, category, quantity: 1, discount: 0 }]);
     }
   };
 
@@ -180,24 +179,33 @@ const LaundryReceipt = () => {
     setCart(cart.filter((cartItem) => !(cartItem.name === item.name && cartItem.category === item.category)));
   };
 
+  const updateItemDiscount = (item, discount) => {
+    const itemTotal = item.price * item.quantity;
+    const validDiscount = Math.min(Math.max(0, discount), itemTotal);
+    
+    setCart(
+      cart.map((cartItem) =>
+        cartItem.name === item.name && cartItem.category === item.category
+          ? { ...cartItem, discount: validDiscount }
+          : cartItem
+      )
+    );
+  };
+
+  const calculateItemSubtotal = (item) => {
+    return (item.price * item.quantity) - (item.discount || 0);
+  };
+
   const calculateSubtotal = () => {
     return cart.reduce((total, item) => total + item.price * item.quantity, 0);
   };
 
-  const calculateTotal = () => {
-    const subtotal = calculateSubtotal();
-    return subtotal - discount;
+  const calculateTotalDiscount = () => {
+    return cart.reduce((total, item) => total + (item.discount || 0), 0);
   };
 
-  const handleDiscountChange = (e) => {
-    const value = parseFloat(e.target.value) || 0;
-    const subtotal = calculateSubtotal();
-    // Ensure discount doesn't exceed subtotal
-    if (value <= subtotal) {
-      setDiscount(value);
-    } else {
-      setDiscount(subtotal);
-    }
+  const calculateTotal = () => {
+    return cart.reduce((total, item) => total + calculateItemSubtotal(item), 0);
   };
 
   const generateReceipt = () => {
@@ -294,7 +302,8 @@ const LaundryReceipt = () => {
                           <Trash2 size={16} />
                         </button>
                       </div>
-                      <div className="flex justify-between items-center">
+                      
+                      <div className="flex justify-between items-center mb-2">
                         <div className="flex items-center gap-2">
                           <button
                             onClick={() => updateQuantity(item, -1)}
@@ -310,10 +319,35 @@ const LaundryReceipt = () => {
                             <Plus size={14} />
                           </button>
                         </div>
-                        <span className="font-bold text-indigo-600">
+                        <span className="font-bold text-gray-700">
                           ₦{(item.price * item.quantity).toLocaleString()}
                         </span>
                       </div>
+
+                      {/* Discount input for each item */}
+                      <div className="mt-2">
+                        <label className="text-xs text-gray-600 block mb-1">
+                          Discount (₦)
+                        </label>
+                        <input
+                          type="number"
+                          placeholder="0"
+                          value={item.discount || ''}
+                          onChange={(e) => updateItemDiscount(item, parseFloat(e.target.value) || 0)}
+                          min="0"
+                          max={item.price * item.quantity}
+                          className="w-full border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                        />
+                      </div>
+
+                      {item.discount > 0 && (
+                        <div className="mt-2 flex justify-between items-center text-sm">
+                          <span className="text-green-600">After Discount:</span>
+                          <span className="font-bold text-indigo-600">
+                            ₦{calculateItemSubtotal(item).toLocaleString()}
+                          </span>
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -326,20 +360,14 @@ const LaundryReceipt = () => {
                     </span>
                   </div>
 
-                  <div className="mb-3">
-                    <label className="text-sm font-semibold text-gray-700 block mb-1">
-                      Discount (₦)
-                    </label>
-                    <input
-                      type="number"
-                      placeholder="0"
-                      value={discount || ''}
-                      onChange={handleDiscountChange}
-                      min="0"
-                      max={calculateSubtotal()}
-                      className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                    />
-                  </div>
+                  {calculateTotalDiscount() > 0 && (
+                    <div className="flex justify-between items-center mb-2 text-green-600">
+                      <span className="text-sm font-semibold">Total Discount:</span>
+                      <span className="text-lg font-semibold">
+                        -₦{calculateTotalDiscount().toLocaleString()}
+                      </span>
+                    </div>
+                  )}
 
                   <div className="flex justify-between items-center mb-4 pb-3 border-b">
                     <span className="text-lg font-bold">Total:</span>
@@ -435,21 +463,23 @@ const LaundryReceipt = () => {
                   <thead>
                     <tr className="border-b-2 border-gray-800">
                       <th className="text-left py-2">Item</th>
-                      <th className="text-left py-2">Category</th>
                       <th className="text-center py-2">Qty</th>
                       <th className="text-right py-2">Price</th>
-                      <th className="text-right py-2">Total</th>
+                      <th className="text-right py-2">Discount</th>
+                      <th className="text-right py-2">Subtotal</th>
                     </tr>
                   </thead>
                   <tbody>
                     {cart.map((item, index) => (
                       <tr key={index} className="border-b">
                         <td className="py-2">{item.name}</td>
-                        <td className="py-2 capitalize">{item.category}</td>
                         <td className="text-center py-2">{item.quantity}</td>
                         <td className="text-right py-2">₦{item.price.toLocaleString()}</td>
-                        <td className="text-right py-2">
-                          ₦{(item.price * item.quantity).toLocaleString()}
+                        <td className="text-right py-2 text-green-600">
+                          {item.discount > 0 ? `-₦${item.discount.toLocaleString()}` : '-'}
+                        </td>
+                        <td className="text-right py-2 font-semibold">
+                          ₦{calculateItemSubtotal(item).toLocaleString()}
                         </td>
                       </tr>
                     ))}
@@ -461,10 +491,10 @@ const LaundryReceipt = () => {
                     <span className="text-lg">Subtotal:</span>
                     <span className="text-lg">₦{calculateSubtotal().toLocaleString()}</span>
                   </div>
-                  {discount > 0 && (
+                  {calculateTotalDiscount() > 0 && (
                     <div className="flex justify-between items-center mb-2 text-green-600">
-                      <span className="text-lg">Discount:</span>
-                      <span className="text-lg">-₦{discount.toLocaleString()}</span>
+                      <span className="text-lg">Total Discount:</span>
+                      <span className="text-lg">-₦{calculateTotalDiscount().toLocaleString()}</span>
                     </div>
                   )}
                   <div className="flex justify-between items-center pt-2 border-t">
@@ -535,9 +565,19 @@ const LaundryReceipt = () => {
                         <span>
                           {item.quantity} x ₦{item.price.toLocaleString()}
                         </span>
-                        <span className="font-semibold">
+                        <span>
                           ₦{(item.price * item.quantity).toLocaleString()}
                         </span>
+                      </div>
+                      {item.discount > 0 && (
+                        <div className="flex justify-between text-xs ml-2 text-green-600">
+                          <span>Discount:</span>
+                          <span>-₦{item.discount.toLocaleString()}</span>
+                        </div>
+                      )}
+                      <div className="flex justify-between text-xs ml-2 font-semibold">
+                        <span>Subtotal:</span>
+                        <span>₦{calculateItemSubtotal(item).toLocaleString()}</span>
                       </div>
                     </div>
                   ))}
@@ -550,10 +590,10 @@ const LaundryReceipt = () => {
                     <span>SUBTOTAL:</span>
                     <span>₦{calculateSubtotal().toLocaleString()}</span>
                   </div>
-                  {discount > 0 && (
+                  {calculateTotalDiscount() > 0 && (
                     <div className="flex justify-between text-green-600">
                       <span>DISCOUNT:</span>
-                      <span>-₦{discount.toLocaleString()}</span>
+                      <span>-₦{calculateTotalDiscount().toLocaleString()}</span>
                     </div>
                   )}
                 </div>
