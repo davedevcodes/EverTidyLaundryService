@@ -31,6 +31,7 @@ const LaundryReceipt = () => {
       { name: 'Kaftan', price: 2500 },
       { name: 'Baseball Cap', price: 500 },
       { name: 'Native Cap', price: 500 },
+      { name: 'Native (Up & Down)', price: 2000 },
       { name: 'Agbada (Alone)', price: 1500 },
       { name: 'Agbada (Complete)', price: 3000 },
       { name: 'Aso Oke (Complete)', price: 3000 },
