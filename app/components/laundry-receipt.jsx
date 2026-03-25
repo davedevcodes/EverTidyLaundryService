@@ -18,6 +18,7 @@ const LaundryReceipt = () => {
     men: [
       { name: 'Colored Shirt', price: 800 },
       { name: 'Jean Up and Down', price: 2000 },
+      { name: 'Hoodie Up and Down', price: 2000 },
       { name: 'Shorts', price: 500 },
       { name: 'White Shirt', price: 800 },
       { name: 'Trouser', price: 800 },
@@ -64,6 +65,7 @@ const LaundryReceipt = () => {
     women: [
       { name: 'Colored Shirt', price: 800 },
       { name: 'Jean Up and Down', price: 2000 },
+      { name: 'Hoodie Up and Down', price: 2000 },
       { name: 'Shorts', price: 500 },
       { name: 'White Shirt', price: 800 },
       { name: 'Blouse', price: 1000 },
