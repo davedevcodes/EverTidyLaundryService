@@ -17,6 +17,12 @@ const LaundryReceipt = () => {
   const laundryItems = {
     men: [
       { name: 'Colored Shirt', price: 800 },
+      { name: 'Pajama set', price: 1000 },
+      { name: 'Gym wear Up & Down (short)', price: 600 },
+      { name: 'Gym wear Up & Down (trouser)', price: 600 },
+      { name: 'Two-piece (Trouser)', price: 1300 },
+      { name: 'Two-piece (Short)', price: 1000 },
+      { name: 'Shoe', price: 1500 },
       { name: 'Jean Up and Down', price: 2000 },
       { name: 'Hoodie Up and Down', price: 2000 },
       { name: 'Shorts', price: 500 },
@@ -64,6 +70,14 @@ const LaundryReceipt = () => {
     ],
     women: [
       { name: 'Colored Shirt', price: 800 },
+      { name: 'Pajama set', price: 1000 },
+      { name: 'Gym wear Up & Down (short)', price: 600 },
+      { name: 'Gym wear Up & Down (trouser)', price: 600 },
+      { name: 'Night Gown (short)', price: 1000 },
+      { name: 'Night Gown (long)', price: 1000 },
+      { name: 'Shoe', price: 1500 },
+      { name: 'Two-piece (Trouser)', price: 1300 },
+      { name: 'Two-piece (Short)', price: 1000 },
       { name: 'Jean Up and Down', price: 2000 },
       { name: 'Hoodie Up and Down', price: 2000 },
       { name: 'Shorts', price: 500 },
@@ -130,6 +144,9 @@ const LaundryReceipt = () => {
       { name: 'Blanket', price: 2000 },
       { name: 'Sofa Covers (per set)', price: 2000 },
       { name: 'Mattress Cover', price: 2000 },
+      { name: 'Big Bag', price: 2500 },
+      { name: 'Medium Bag', price: 1500 },
+      { name: 'Small Bag', price: 1000 },
     ],
     SpecialPackages: [
       { name: '(Kids) 40 Cloths (Wash & Fold)', price: 15000 },
