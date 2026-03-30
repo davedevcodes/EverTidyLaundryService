@@ -72,6 +72,7 @@ const LaundryReceipt = () => {
       { name: 'Pajama set', price: 1000 },
       { name: 'Gym wear Up & Down (short)', price: 600 },
       { name: 'Gym wear Up & Down (trouser)', price: 1000 },
+      { name: 'Night Gown Top', price: 500 },
       { name: 'Night Gown (short)', price: 600 },
       { name: 'Night Gown (long)', price: 1000 },
       { name: 'Two-piece (Trouser)', price: 1300 },
