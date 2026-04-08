@@ -70,6 +70,9 @@ const LaundryReceipt = () => {
     women: [
       { name: 'Colored Shirt', price: 800 },
       { name: 'Pajama set', price: 1000 },
+      { name: 'Jean Jump suit', price: 1500 },
+      { name: 'Hoodie trouser', price: 1000 },
+      { name: 'Sports Bra', price: 500 },
       { name: 'Gym wear Up & Down (short)', price: 600 },
       { name: 'Gym wear Up & Down (trouser)', price: 1000 },
       { name: 'Night Gown Top', price: 500 },
@@ -147,6 +150,8 @@ const LaundryReceipt = () => {
       { name: 'Medium Bag', price: 1500 },
       { name: 'Small Bag', price: 1000 },
       { name: 'Shoe', price: 1500 },
+      { name: 'wrapper', price: 800 },
+      { name: 'Singlets', price: 500 },
     ],
     SpecialPackages: [
       { name: '(Kids) 40 Cloths (Wash & Fold)', price: 15000 },
