@@ -11,10 +11,11 @@ const LaundryReceipt = () => {
   const [customerName, setCustomerName] = useState('');
   const [showReceipt, setShowReceipt] = useState(false);
   const [receiptStyle, setReceiptStyle] = useState('standard');
-  const [isExpress, setIsExpress] = useState(false);
+  const [expressCharge, setExpressCharge] = useState('');
   const receiptRef = useRef();
 
-  const EXPRESS_SURCHARGE_RATE = 0.2;
+  const isExpress = parseFloat(expressCharge) > 0;
+  const expressAmount = parseFloat(expressCharge) || 0;
 
   const laundryItems = {
     men: [
@@ -237,13 +238,8 @@ const LaundryReceipt = () => {
     return cart.reduce((total, item) => total + calculateItemSubtotal(item), 0);
   };
 
-  const calculateExpressSurcharge = () => {
-    if (!isExpress) return 0;
-    return Math.round(calculateTotal() * EXPRESS_SURCHARGE_RATE);
-  };
-
   const calculateGrandTotal = () => {
-    return calculateTotal() + calculateExpressSurcharge();
+    return calculateTotal() + expressAmount;
   };
 
   const generateReceipt = () => {
@@ -411,35 +407,28 @@ const LaundryReceipt = () => {
                     </span>
                   </div>
 
-                  {/* Express Order Toggle */}
-                  <div
-                    onClick={() => setIsExpress(!isExpress)}
-                    className={`flex items-center justify-between cursor-pointer rounded-lg px-4 py-3 mb-3 border-2 transition-colors ${
-                      isExpress
-                        ? 'border-amber-500 bg-amber-50'
-                        : 'border-gray-200 bg-gray-50 hover:border-amber-300'
-                    }`}
-                  >
-                    <div className="flex items-center gap-2">
-                      <Zap size={18} className={isExpress ? 'text-amber-500' : 'text-gray-400'} />
-                      <div>
-                        <p className={`font-semibold text-sm ${isExpress ? 'text-amber-700' : 'text-gray-600'}`}>
-                          Express Order
-                        </p>
-                        <p className="text-xs text-gray-400">+20% surcharge • Priority handling</p>
-                      </div>
+                  {/* Express Order Input */}
+                  <div className={`rounded-lg px-4 py-3 mb-3 border-2 transition-colors ${
+                    isExpress ? 'border-amber-400 bg-amber-50' : 'border-gray-200 bg-gray-50'
+                  }`}>
+                    <div className="flex items-center gap-2 mb-2">
+                      <Zap size={16} className={isExpress ? 'text-amber-500' : 'text-gray-400'} />
+                      <span className={`text-sm font-semibold ${isExpress ? 'text-amber-700' : 'text-gray-600'}`}>
+                        Express Order Charge (₦)
+                      </span>
                     </div>
-                    <div className={`w-10 h-5 rounded-full transition-colors relative ${isExpress ? 'bg-amber-500' : 'bg-gray-300'}`}>
-                      <span className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-all ${isExpress ? 'left-5' : 'left-0.5'}`} />
-                    </div>
+                    <input
+                      type="number"
+                      placeholder="Enter express charge or leave blank"
+                      value={expressCharge}
+                      onChange={(e) => setExpressCharge(e.target.value)}
+                      min="0"
+                      className="w-full border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-amber-400"
+                    />
+                    {isExpress && (
+                      <p className="text-xs text-amber-600 mt-1">Priority handling applied</p>
+                    )}
                   </div>
-
-                  {isExpress && (
-                    <div className="flex justify-between items-center mb-2 text-amber-600">
-                      <span className="text-sm font-semibold">Express Surcharge (20%):</span>
-                      <span className="font-bold">+₦{calculateExpressSurcharge().toLocaleString()}</span>
-                    </div>
-                  )}
 
                   {isExpress && (
                     <div className="flex justify-between items-center mb-4 pb-3 border-b">
@@ -579,8 +568,8 @@ const LaundryReceipt = () => {
                   )}
                   {isExpress && (
                     <div className="flex justify-between items-center mb-2 text-amber-600">
-                      <span className="text-lg">Express Surcharge (20%):</span>
-                      <span className="text-lg">+₦{calculateExpressSurcharge().toLocaleString()}</span>
+                      <span className="text-lg">Express Charge:</span>
+                      <span className="text-lg">+₦{expressAmount.toLocaleString()}</span>
                     </div>
                   )}
                   <div className="flex justify-between items-center pt-2 border-t">
@@ -694,8 +683,8 @@ const LaundryReceipt = () => {
                   )}
                   {isExpress && (
                     <div className="flex justify-between text-amber-600">
-                      <span>EXPRESS (+20%):</span>
-                      <span>+₦{calculateExpressSurcharge().toLocaleString()}</span>
+                      <span>EXPRESS CHARGE:</span>
+                      <span>+₦{expressAmount.toLocaleString()}</span>
                     </div>
                   )}
                 </div>
