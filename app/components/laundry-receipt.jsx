@@ -2,7 +2,7 @@
 
 import React, { useState, useRef } from 'react';
 import Image from "next/image";
-import { ShoppingCart, Plus, Minus, Trash2, Printer, X } from 'lucide-react';
+import { ShoppingCart, Plus, Minus, Trash2, Printer, X, Zap } from 'lucide-react';
 import { useReactToPrint } from 'react-to-print';
 
 const LaundryReceipt = () => {
@@ -10,10 +10,12 @@ const LaundryReceipt = () => {
   const [selectedCategory, setSelectedCategory] = useState('men');
   const [customerName, setCustomerName] = useState('');
   const [showReceipt, setShowReceipt] = useState(false);
-  const [receiptStyle, setReceiptStyle] = useState('standard'); // 'standard' or 'pos'
+  const [receiptStyle, setReceiptStyle] = useState('standard');
+  const [isExpress, setIsExpress] = useState(false);
   const receiptRef = useRef();
 
-  // Laundry items with pricing
+  const EXPRESS_SURCHARGE_RATE = 0.2;
+
   const laundryItems = {
     men: [
       { name: 'Colored Shirt', price: 800 },
@@ -46,22 +48,22 @@ const LaundryReceipt = () => {
       { name: 'Buba & Sokoto (Ankara)', price: 2000 },
       { name: 'Trousers & Igbo Buba', price: 2000 },
       { name: 'Hoodie', price: 1000 },
-      { name: 'Blazer / Suit Jacket', price: 1500 }, 
-      { name: 'Lawyers Collar', price: 500 }, 
-      { name: 'Lawyers Bib', price: 1000 }, 
-      { name: 'Pyjamas Set', price: 1000 }, 
-      { name: 'Boxers', price: 300 }, 
+      { name: 'Blazer / Suit Jacket', price: 1500 },
+      { name: 'Lawyers Collar', price: 500 },
+      { name: 'Lawyers Bib', price: 1000 },
+      { name: 'Pyjamas Set', price: 1000 },
+      { name: 'Boxers', price: 300 },
       { name: 'Armless Jacket', price: 1000 },
-      { name: 'Canvas Shoe', price: 2000 }, 
-      { name: 'Laptop Bag', price: 1000 },  
-      { name: 'Jalamia', price: 1000 }, 
-      { name: 'singlet', price: 300 }, 
-      { name: 'Sweat Shirt', price: 1000 }, 
-      { name: 'Small Face Towel', price: 300 }, 
-      { name: 'Handkerchief', price: 50 }, 
-      { name: 'Jeans Jacket', price: 1000 }, 
-      { name: 'Complete Pullover', price: 1500 }, 
-      { name: 'Pullover Top', price: 1000 }, 
+      { name: 'Canvas Shoe', price: 2000 },
+      { name: 'Laptop Bag', price: 1000 },
+      { name: 'Jalamia', price: 1000 },
+      { name: 'singlet', price: 300 },
+      { name: 'Sweat Shirt', price: 1000 },
+      { name: 'Small Face Towel', price: 300 },
+      { name: 'Handkerchief', price: 50 },
+      { name: 'Jeans Jacket', price: 1000 },
+      { name: 'Complete Pullover', price: 1500 },
+      { name: 'Pullover Top', price: 1000 },
       { name: 'Shorts', price: 400 },
       { name: 'Jeans Nika', price: 1000 },
       { name: 'Polo', price: 800 },
@@ -178,7 +180,6 @@ const LaundryReceipt = () => {
     const existingItem = cart.find(
       (cartItem) => cartItem.name === item.name && cartItem.category === category
     );
-
     if (existingItem) {
       setCart(
         cart.map((cartItem) =>
@@ -211,7 +212,6 @@ const LaundryReceipt = () => {
   const updateItemDiscount = (item, discount) => {
     const itemTotal = item.price * item.quantity;
     const validDiscount = Math.min(Math.max(0, discount), itemTotal);
-    
     setCart(
       cart.map((cartItem) =>
         cartItem.name === item.name && cartItem.category === item.category
@@ -235,6 +235,15 @@ const LaundryReceipt = () => {
 
   const calculateTotal = () => {
     return cart.reduce((total, item) => total + calculateItemSubtotal(item), 0);
+  };
+
+  const calculateExpressSurcharge = () => {
+    if (!isExpress) return 0;
+    return Math.round(calculateTotal() * EXPRESS_SURCHARGE_RATE);
+  };
+
+  const calculateGrandTotal = () => {
+    return calculateTotal() + calculateExpressSurcharge();
   };
 
   const generateReceipt = () => {
@@ -261,7 +270,7 @@ const LaundryReceipt = () => {
           {/* Items Selection */}
           <div className="md:col-span-2 bg-white rounded-lg shadow-lg p-6">
             <h2 className="text-2xl font-bold text-gray-800 mb-4">Select Items</h2>
-            
+
             {/* Category Tabs */}
             <div className="flex gap-2 mb-6 flex-wrap">
               {Object.keys(laundryItems).map((category) => (
@@ -331,7 +340,7 @@ const LaundryReceipt = () => {
                           <Trash2 size={16} />
                         </button>
                       </div>
-                      
+
                       <div className="flex justify-between items-center mb-2">
                         <div className="flex items-center gap-2">
                           <button
@@ -353,11 +362,8 @@ const LaundryReceipt = () => {
                         </span>
                       </div>
 
-                      {/* Discount input for each item */}
                       <div className="mt-2">
-                        <label className="text-xs text-gray-600 block mb-1">
-                          Discount (₦)
-                        </label>
+                        <label className="text-xs text-gray-600 block mb-1">Discount (₦)</label>
                         <input
                           type="number"
                           placeholder="0"
@@ -404,6 +410,45 @@ const LaundryReceipt = () => {
                       ₦{calculateTotal().toLocaleString()}
                     </span>
                   </div>
+
+                  {/* Express Order Toggle */}
+                  <div
+                    onClick={() => setIsExpress(!isExpress)}
+                    className={`flex items-center justify-between cursor-pointer rounded-lg px-4 py-3 mb-3 border-2 transition-colors ${
+                      isExpress
+                        ? 'border-amber-500 bg-amber-50'
+                        : 'border-gray-200 bg-gray-50 hover:border-amber-300'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2">
+                      <Zap size={18} className={isExpress ? 'text-amber-500' : 'text-gray-400'} />
+                      <div>
+                        <p className={`font-semibold text-sm ${isExpress ? 'text-amber-700' : 'text-gray-600'}`}>
+                          Express Order
+                        </p>
+                        <p className="text-xs text-gray-400">+20% surcharge • Priority handling</p>
+                      </div>
+                    </div>
+                    <div className={`w-10 h-5 rounded-full transition-colors relative ${isExpress ? 'bg-amber-500' : 'bg-gray-300'}`}>
+                      <span className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-all ${isExpress ? 'left-5' : 'left-0.5'}`} />
+                    </div>
+                  </div>
+
+                  {isExpress && (
+                    <div className="flex justify-between items-center mb-2 text-amber-600">
+                      <span className="text-sm font-semibold">Express Surcharge (20%):</span>
+                      <span className="font-bold">+₦{calculateExpressSurcharge().toLocaleString()}</span>
+                    </div>
+                  )}
+
+                  {isExpress && (
+                    <div className="flex justify-between items-center mb-4 pb-3 border-b">
+                      <span className="text-lg font-bold">Grand Total:</span>
+                      <span className="text-2xl font-bold text-amber-600">
+                        ₦{calculateGrandTotal().toLocaleString()}
+                      </span>
+                    </div>
+                  )}
 
                   <div className="mb-3">
                     <label className="text-sm font-semibold text-gray-700 block mb-1">
@@ -479,6 +524,12 @@ const LaundryReceipt = () => {
                     className="bg-blue-950 rounded-full flex self-center mx-auto mb-5"
                   />
                   <h1 className="text-3xl font-bold text-indigo-900">RECEIPT</h1>
+                  {isExpress && (
+                    <div className="inline-flex items-center gap-1 bg-amber-100 text-amber-700 border border-amber-300 rounded-full px-3 py-1 text-sm font-semibold mt-2">
+                      <Zap size={14} />
+                      EXPRESS ORDER — Priority Handling
+                    </div>
+                  )}
                   <div className="w-full h-1 bg-indigo-600 my-2"></div>
                 </div>
 
@@ -526,10 +577,18 @@ const LaundryReceipt = () => {
                       <span className="text-lg">-₦{calculateTotalDiscount().toLocaleString()}</span>
                     </div>
                   )}
+                  {isExpress && (
+                    <div className="flex justify-between items-center mb-2 text-amber-600">
+                      <span className="text-lg">Express Surcharge (20%):</span>
+                      <span className="text-lg">+₦{calculateExpressSurcharge().toLocaleString()}</span>
+                    </div>
+                  )}
                   <div className="flex justify-between items-center pt-2 border-t">
-                    <span className="text-xl font-bold">TOTAL:</span>
-                    <span className="text-3xl font-bold text-indigo-600">
-                      ₦{calculateTotal().toLocaleString()}
+                    <span className="text-xl font-bold">
+                      {isExpress ? 'GRAND TOTAL:' : 'TOTAL:'}
+                    </span>
+                    <span className={`text-3xl font-bold ${isExpress ? 'text-amber-600' : 'text-indigo-600'}`}>
+                      ₦{calculateGrandTotal().toLocaleString()}
                     </span>
                   </div>
                 </div>
@@ -547,7 +606,7 @@ const LaundryReceipt = () => {
                 </button>
               </div>
             ) : (
-              // POS Receipt Style
+              // POS Receipt
               <div ref={receiptRef} className="p-6 font-mono text-sm bg-white">
                 <div className="text-center mb-4">
                   <Image
@@ -560,6 +619,12 @@ const LaundryReceipt = () => {
                   <h1 className="text-xl font-bold">EVERTIDY LAUNDRY</h1>
                   <p className="text-xs mt-1">Premium Laundry Services</p>
                   <p className="text-xs">Tel: +234-812-209-9927</p>
+                  {isExpress && (
+                    <div className="flex justify-center items-center gap-1 text-amber-600 font-bold mt-2">
+                      <Zap size={12} />
+                      <span>EXPRESS ORDER — Priority Handling</span>
+                    </div>
+                  )}
                   <div className="border-t-2 border-dashed border-gray-800 my-2"></div>
                 </div>
 
@@ -580,6 +645,12 @@ const LaundryReceipt = () => {
                     <span>Receipt #:</span>
                     <span>{Date.now().toString().slice(-8)}</span>
                   </div>
+                  <div className="flex justify-between">
+                    <span>Order Type:</span>
+                    <span className={`font-bold ${isExpress ? 'text-amber-600' : ''}`}>
+                      {isExpress ? '⚡ Express' : 'Standard'}
+                    </span>
+                  </div>
                 </div>
 
                 <div className="border-t-2 border-dashed border-gray-800 my-2"></div>
@@ -591,12 +662,8 @@ const LaundryReceipt = () => {
                         <span className="font-semibold">{item.name}</span>
                       </div>
                       <div className="flex justify-between text-xs ml-2">
-                        <span>
-                          {item.quantity} x ₦{item.price.toLocaleString()}
-                        </span>
-                        <span>
-                          ₦{(item.price * item.quantity).toLocaleString()}
-                        </span>
+                        <span>{item.quantity} x ₦{item.price.toLocaleString()}</span>
+                        <span>₦{(item.price * item.quantity).toLocaleString()}</span>
                       </div>
                       {item.discount > 0 && (
                         <div className="flex justify-between text-xs ml-2 text-green-600">
@@ -625,13 +692,19 @@ const LaundryReceipt = () => {
                       <span>-₦{calculateTotalDiscount().toLocaleString()}</span>
                     </div>
                   )}
+                  {isExpress && (
+                    <div className="flex justify-between text-amber-600">
+                      <span>EXPRESS (+20%):</span>
+                      <span>+₦{calculateExpressSurcharge().toLocaleString()}</span>
+                    </div>
+                  )}
                 </div>
 
                 <div className="border-t-2 border-double border-gray-800 my-2"></div>
 
-                <div className="flex justify-between text-lg font-bold mb-4">
-                  <span>TOTAL:</span>
-                  <span>₦{calculateTotal().toLocaleString()}</span>
+                <div className={`flex justify-between text-lg font-bold mb-4 ${isExpress ? 'text-amber-600' : ''}`}>
+                  <span>{isExpress ? 'GRAND TOTAL:' : 'TOTAL:'}</span>
+                  <span>₦{calculateGrandTotal().toLocaleString()}</span>
                 </div>
 
                 <div className="border-t-2 border-dashed border-gray-800 my-2"></div>
