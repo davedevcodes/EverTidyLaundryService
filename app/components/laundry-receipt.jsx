@@ -148,6 +148,8 @@ const LaundryReceipt = () => {
       { name: 'Towel (large)', price: 1500 },
       { name: 'Towel (small/face)', price: 500 },
       { name: 'Blanket', price: 2000 },
+      { name: 'Large Blanket', price: 4000 },
+      { name: 'Gym / Bike Glove', price: 300 },
       { name: 'Sofa Covers (per set)', price: 2000 },
       { name: 'Mattress Cover', price: 2000 },
       { name: 'Big Bag', price: 2500 },
