@@ -12,10 +12,14 @@ const LaundryReceipt = () => {
   const [showReceipt, setShowReceipt] = useState(false);
   const [receiptStyle, setReceiptStyle] = useState('standard');
   const [expressCharge, setExpressCharge] = useState('');
+  const [pickupPrice, setPickupPrice] = useState('');
+  const [deliveryPrice, setDeliveryPrice] = useState('');
   const receiptRef = useRef();
 
   const isExpress = parseFloat(expressCharge) > 0;
   const expressAmount = parseFloat(expressCharge) || 0;
+  const pickupAmount = parseFloat(pickupPrice) || 0;
+  const deliveryAmount = parseFloat(deliveryPrice) || 0;
 
   const laundryItems = {
     men: [
@@ -241,7 +245,7 @@ const LaundryReceipt = () => {
   };
 
   const calculateGrandTotal = () => {
-    return calculateTotal() + expressAmount;
+    return calculateTotal() + expressAmount + pickupAmount + deliveryAmount;
   };
 
   const generateReceipt = () => {
@@ -265,11 +269,9 @@ const LaundryReceipt = () => {
         </h1>
 
         <div className="grid md:grid-cols-3 gap-6">
-          {/* Items Selection */}
           <div className="md:col-span-2 bg-white rounded-lg shadow-lg p-6">
             <h2 className="text-2xl font-bold text-gray-800 mb-4">Select Items</h2>
 
-            {/* Category Tabs */}
             <div className="flex gap-2 mb-6 flex-wrap">
               {Object.keys(laundryItems).map((category) => (
                 <button
@@ -286,7 +288,6 @@ const LaundryReceipt = () => {
               ))}
             </div>
 
-            {/* Items Grid */}
             <div className="grid sm:grid-cols-2 gap-4">
               {laundryItems[selectedCategory].map((item, index) => (
                 <div
@@ -309,7 +310,6 @@ const LaundryReceipt = () => {
             </div>
           </div>
 
-          {/* Cart */}
           <div className="bg-white text-black rounded-lg shadow-lg p-6 h-fit sticky top-4">
             <div className="flex items-center gap-2 mb-4">
               <ShoppingCart className="text-indigo-600" />
@@ -409,7 +409,6 @@ const LaundryReceipt = () => {
                     </span>
                   </div>
 
-                  {/* Express Order Input */}
                   <div className={`rounded-lg px-4 py-3 mb-3 border-2 transition-colors ${
                     isExpress ? 'border-amber-400 bg-amber-50' : 'border-gray-200 bg-gray-50'
                   }`}>
@@ -432,14 +431,38 @@ const LaundryReceipt = () => {
                     )}
                   </div>
 
-                  {isExpress && (
-                    <div className="flex justify-between items-center mb-4 pb-3 border-b">
-                      <span className="text-lg font-bold">Grand Total:</span>
-                      <span className="text-2xl font-bold text-amber-600">
-                        ₦{calculateGrandTotal().toLocaleString()}
-                      </span>
+                  <div className="grid grid-cols-2 gap-3 mb-4">
+                    <div className="rounded-lg px-4 py-3 border border-gray-200 bg-gray-50">
+                      <label className="text-xs font-semibold text-gray-600 block mb-1">Pickup Price (₦)</label>
+                      <input
+                        type="number"
+                        placeholder="0"
+                        value={pickupPrice}
+                        onChange={(e) => setPickupPrice(e.target.value)}
+                        min="0"
+                        className="w-full border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-indigo-400"
+                      />
                     </div>
-                  )}
+
+                    <div className="rounded-lg px-4 py-3 border border-gray-200 bg-gray-50">
+                      <label className="text-xs font-semibold text-gray-600 block mb-1">Delivery Price (₦)</label>
+                      <input
+                        type="number"
+                        placeholder="0"
+                        value={deliveryPrice}
+                        onChange={(e) => setDeliveryPrice(e.target.value)}
+                        min="0"
+                        className="w-full border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-indigo-400"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex justify-between items-center mb-4 pb-3 border-b">
+                    <span className="text-lg font-bold">Grand Total:</span>
+                    <span className="text-2xl font-bold text-indigo-600">
+                      ₦{calculateGrandTotal().toLocaleString()}
+                    </span>
+                  </div>
 
                   <div className="mb-3">
                     <label className="text-sm font-semibold text-gray-700 block mb-1">
@@ -490,7 +513,6 @@ const LaundryReceipt = () => {
         </div>
       </div>
 
-      {/* Receipt Modal */}
       {showReceipt && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className={`bg-white text-black rounded-lg shadow-2xl ${receiptStyle === 'pos' ? 'max-w-sm' : 'max-w-xl'} w-full max-h-[90vh] overflow-y-auto`}>
@@ -504,7 +526,6 @@ const LaundryReceipt = () => {
             </div>
 
             {receiptStyle === 'standard' ? (
-              // Standard Receipt
               <div ref={receiptRef} className="p-8">
                 <div className="text-center mb-6">
                   <Image
@@ -574,11 +595,21 @@ const LaundryReceipt = () => {
                       <span className="text-lg">+₦{expressAmount.toLocaleString()}</span>
                     </div>
                   )}
+                  {pickupAmount > 0 && (
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="text-lg">Pickup Fee:</span>
+                      <span className="text-lg">+₦{pickupAmount.toLocaleString()}</span>
+                    </div>
+                  )}
+                  {deliveryAmount > 0 && (
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="text-lg">Delivery Fee:</span>
+                      <span className="text-lg">+₦{deliveryAmount.toLocaleString()}</span>
+                    </div>
+                  )}
                   <div className="flex justify-between items-center pt-2 border-t">
-                    <span className="text-xl font-bold">
-                      {isExpress ? 'GRAND TOTAL:' : 'TOTAL:'}
-                    </span>
-                    <span className={`text-3xl font-bold ${isExpress ? 'text-amber-600' : 'text-indigo-600'}`}>
+                    <span className="text-xl font-bold">GRAND TOTAL:</span>
+                    <span className="text-3xl font-bold text-indigo-600">
                       ₦{calculateGrandTotal().toLocaleString()}
                     </span>
                   </div>
@@ -597,7 +628,6 @@ const LaundryReceipt = () => {
                 </button>
               </div>
             ) : (
-              // POS Receipt
               <div ref={receiptRef} className="p-6 font-mono text-sm bg-white">
                 <div className="text-center mb-4">
                   <Image
@@ -689,12 +719,24 @@ const LaundryReceipt = () => {
                       <span>+₦{expressAmount.toLocaleString()}</span>
                     </div>
                   )}
+                  {pickupAmount > 0 && (
+                    <div className="flex justify-between">
+                      <span>PICKUP FEE:</span>
+                      <span>+₦{pickupAmount.toLocaleString()}</span>
+                    </div>
+                  )}
+                  {deliveryAmount > 0 && (
+                    <div className="flex justify-between">
+                      <span>DELIVERY FEE:</span>
+                      <span>+₦{deliveryAmount.toLocaleString()}</span>
+                    </div>
+                  )}
                 </div>
 
                 <div className="border-t-2 border-double border-gray-800 my-2"></div>
 
                 <div className={`flex justify-between text-lg font-bold mb-4 ${isExpress ? 'text-amber-600' : ''}`}>
-                  <span>{isExpress ? 'GRAND TOTAL:' : 'TOTAL:'}</span>
+                  <span>GRAND TOTAL:</span>
                   <span>₦{calculateGrandTotal().toLocaleString()}</span>
                 </div>
 
